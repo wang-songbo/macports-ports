@@ -1,0 +1,44 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+
+name                s6-portable-utils
+version             2.3.0.2
+revision            0
+categories          sysutils
+license             ISC
+maintainers         nomaintainer
+description         A set of tiny general Unix utilities
+
+long_description \
+    s6-portable-utils is a set of tiny general Unix utilities, \
+    often performing well-known tasks such as cut and grep, \
+    but optimized for simplicity and small size. They were designed \
+    for embedded systems and other constrained environments, \
+    but they work everywhere. 
+
+homepage            https://skarnet.org/software/s6-portable-utils/
+master_sites        ${homepage}
+
+depends_build       port:skalibs
+
+checksums           rmd160  994390a392e1653f5c463e53d4726a63fc6b3f10 \
+                    sha256  8714269134f012650daac040e5646372dea5658b9c0d89a7ca03bb2abec4d1e8 \
+                    size    51106
+
+configure.args      --disable-shared \
+                    --with-lib=${prefix}/lib/skalibs
+
+post-destroot {
+    set docdir ${prefix}/share/doc/${name}
+    xinstall -d ${destroot}${docdir}
+    xinstall -m 0644 -W ${worksrcpath} \
+        AUTHORS \
+        COPYING \
+        NEWS \
+        README \
+        README.macos \
+        ${destroot}${docdir}
+    xinstall -m 0644 {*}[glob ${worksrcpath}/doc/*.html] \
+        ${destroot}${docdir}
+}
