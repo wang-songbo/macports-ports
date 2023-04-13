@@ -1,0 +1,51 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+
+name                s6-rc
+version             0.5.4.1
+revision            0
+categories          sysutils
+license             ISC
+maintainers         nomaintainer
+description         Service manager for s6-based systems
+
+long_description \
+    s6-rc is a service manager for s6-based systems, i.e. a suite of \
+    programs that can start and stop services, both long-running daemons \
+    and one-time initialization scripts, in the proper order according to \
+    a dependency tree. It ensures that long-running daemons are supervised by \
+    the s6 infrastructure, and that one-time scripts are also run in a \
+    controlled environment.
+
+homepage            https://skarnet.org/software/s6-rc/
+master_sites        ${homepage}
+
+depends_build       port:execline \
+                    port:skalibs
+depends_run         port:execline \
+                    port:s6
+
+checksums           rmd160  6ce2862ce9d706e7e2c60a73424d24da2867c2a3 \
+                    sha256  d7268cab7c5423305cf9598a33d4fcdab8a315952b3ec80f79c85b8cb76158f6 \
+                    size    101078
+
+configure.args      --disable-shared \
+                    --with-lib=${prefix}/lib/execline \
+                    --with-lib=${prefix}/lib/skalibs \
+                    --with-lib=${prefix}/lib/s6 \
+                    --livedir=${prefix}/var/run/s6-rc
+
+post-destroot {
+    set docdir ${prefix}/share/doc/${name}
+    xinstall -d ${destroot}${docdir}
+    xinstall -m 0644 -W ${worksrcpath} \
+        AUTHORS \
+        COPYING \
+        NEWS \
+        README \
+        README.macos \
+        ${destroot}${docdir}
+    xinstall -m 0644 {*}[glob ${worksrcpath}/doc/*.html] \
+        ${destroot}${docdir}
+}
