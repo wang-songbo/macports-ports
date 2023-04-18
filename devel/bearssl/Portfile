@@ -1,0 +1,45 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+
+name                bearssl
+version             0.6
+revision            0
+categories          devel
+license             MIT
+maintainers         nomaintainer
+description         Implementation of the SSL/TLS protocol (RFC 5246) written in C
+
+long_description    "BearSSL is an implementation of the SSL/TLS protocol (RFC 5246) written in C. It aims at offering the following features:
+
+Be correct and secure. In particular, insecure protocol versions and choices of algorithms are not supported, by design; cryptographic algorithm implementations are constant-time by default.
+
+Be small, both in RAM and code footprint. For instance, a minimal server implementation may fit in about 20 kilobytes of compiled code and 25 kilobytes of RAM.
+
+Be highly portable. BearSSL targets not only “big” operating systems like Linux and Windows, but also small embedded systems and even special contexts like bootstrap code.
+
+Be feature-rich and extensible. SSL/TLS has many defined cipher suites and extensions; BearSSL should implement most of them, and allow extra algorithm implementations to be added afterwards, possibly from third parties."
+
+homepage            https://bearssl.org/
+master_sites        ${homepage}
+
+checksums           rmd160  15cbb065fcccfac434e097a98e054d3b0498e2ea \
+                    sha256  6705bba1714961b41a728dfc5debbe348d2966c117649392f8c8139efc83ff14 \
+                    size    765094
+
+use_configure       no
+
+patchfiles          patch-conf_Unix.mk
+
+destroot {
+    xinstall -W ${worksrcpath}/build \
+        -m 0755 brssl ${destroot}${prefix}/bin
+    xinstall \
+        -m 0644 {*}[glob ${worksrcpath}/inc/*.h] ${destroot}${prefix}/include
+    xinstall -W ${worksrcpath}/build \
+        -m 0644 libbearssl.a ${destroot}${prefix}/lib
+}
+
+test.run            yes
+test.cmd            ./build/testcrypto all && \
+                        ./build/testx509
